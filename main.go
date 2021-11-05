@@ -375,7 +375,20 @@ func GetMaxCard(result map[int]map[int]int) (maxCard []int) {
 			sort.Sort(sort.Reverse(sort.IntSlice(number)))
 		}
 		//花色數字排序用
-		maxColor[color[0]] = menber
+		for _, v := range color {
+			nn := v % 13
+
+			if nn == 0 {
+				nn = 13
+			}
+
+			if nn == number[0] {
+				maxColor[v] = menber
+				break
+			}
+		}
+
+		// maxColor[color[0]] = menber
 		maxNumber[menber] = number[0]
 	}
 
