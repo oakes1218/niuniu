@@ -483,13 +483,13 @@ func (c *CardType) CompareResult(originResults [][]int) map[int][]int {
 		}
 	}
 
-	topRank := make(map[int]map[int]map[int]int)
+	// topRank := make(map[int]map[int]map[int]int)
 	for level, same := range mSameLevelResult {
 		mc := make(map[int]map[int]int)
 		for _, menber := range same {
 			mc[menber] = ChangeCard(originResults[menber], c.cardTypeS)
 		}
-		topRank[level] = mc
+		// topRank[level] = mc
 		//相同牌型在判斷
 		if len(mc) > 1 {
 			rSort := GetMaxCard(mc)

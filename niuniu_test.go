@@ -9,6 +9,8 @@ import (
 
 func TestNiuniuCartType(t *testing.T) {
 	originResults := [][]int{{1, 2, 3, 4, 5}, {6, 7, 8, 9, 10}, {11, 12, 13, 14, 15}, {16, 17, 18, 19, 20}, {21, 22, 23, 24, 25}, {26, 27, 28, 29, 30}, {31, 32, 33, 34, 35}, {36, 37, 38, 39, 40}, {41, 42, 43, 44, 45}, {46, 47, 48, 53, 54}}
+	// originResults := [][]int{{2, 3, 9, 10, 13}, {41, 42, 48, 49, 51}, {15, 16, 22, 23, 26}, {28, 29, 35, 36, 38}}
+	// originResults := [][]int{{2, 3, 9, 10, 12}, {41, 42, 48, 49, 51}, {15, 16, 22, 23, 25}, {28, 29, 35, 36, 38}}
 	rankResult := make(map[int][]int)
 	cts := []string{"sc", "ff", "5f", "4f", "cc", "c9", "c8", "c7", "c6", "c5", "c4", "c3", "c2", "c1", "c0"}
 
@@ -26,6 +28,7 @@ func TestNiuniuCartType(t *testing.T) {
 
 	result := n.CompareResult(originResults)
 	assert.Equal(t, result, rankResult)
+	log.Println(result)
 }
 
 func TestCompareType(t *testing.T) {
