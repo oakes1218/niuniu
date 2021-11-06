@@ -362,122 +362,50 @@ func CompareType(result map[int]int, CardTypeSlice []string) (cardType string) {
 	return cardType
 }
 
+type UserCardType struct {
+	Member int
+	Color  int
+	Number int
+}
+
 func GetMaxCard(result map[int]map[int]int) (maxCard []int) {
-	maxColor := make(map[int]int)
-	maxNumber := make(map[int]int)
+	for i := len(result); i > 0; i-- {
+		var member int
+		member, result = cycle(result)
+		maxCard = append(maxCard, member)
+	}
 
-	for menber, card := range result {
-		var color, number []int
+	return maxCard
+}
+
+func cycle(result map[int]map[int]int) (int, map[int]map[int]int) {
+	var userCardType UserCardType
+	for member, card := range result {
 		for k, v := range card {
-			color = append(color, k)
-			number = append(number, v)
-			sort.Sort(sort.Reverse(sort.IntSlice(color)))
-			sort.Sort(sort.Reverse(sort.IntSlice(number)))
-		}
-		//花色數字排序用
-		for _, v := range color {
-			nn := v % 13
-
-			if nn == 0 {
-				nn = 13
+			// log.Println(k, v, "--------------")
+			if userCardType.Number < v {
+				userCardType.Member = member
+				userCardType.Color = k
+				userCardType.Number = v
 			}
 
-			if nn == number[0] {
-				maxColor[v] = menber
-				break
-			}
-		}
-
-		// maxColor[color[0]] = menber
-		maxNumber[menber] = number[0]
-	}
-
-	var nMax, cMax []int
-	//排序數字大玩家 無順序
-	for i := 13; i >= 1; i-- {
-		for menber, number := range maxNumber {
-			if i == number {
-				nMax = append(nMax, menber)
-			}
-		}
-	}
-
-	//取重複牌型玩家 無順序
-	var duplicate []int
-	for k, v := range maxNumber {
-		for k2, v2 := range maxNumber {
-			if v == v2 && k != k2 {
-				duplicate = append(duplicate, k2)
-			}
-		}
-	}
-
-	//golang map 用原生range遍歷不能保證順序輸出
-	//降冪排列花色數字
-	var keys []int
-	for k := range maxColor {
-		keys = append(keys, k)
-	}
-
-	sort.Sort(sort.Reverse(sort.IntSlice(keys)))
-
-	//若沒有重複牌型 不需找牌型merge 數字大的贏
-	if len(duplicate) == 0 {
-		cMax = nMax
-	} else {
-		for _, k := range keys {
-			for _, v := range duplicate {
-				if maxColor[k] == v {
-					cMax = append(cMax, v)
+			if userCardType.Number == v {
+				if userCardType.Color < k {
+					userCardType.Member = member
+					userCardType.Color = k
 				}
 			}
 		}
 	}
+	// log.Println(userCardType)
+	delete(result, userCardType.Member)
 
-	maxCard = MergeSortSlice(nMax, cMax)
-
-	// log.Println(result)
-	// log.Println(cMax, nMax, maxCard, maxColor, maxNumber)
-	return maxCard
-}
-
-func MergeSortSlice(first []int, second []int) (result []int) {
-	var s []int
-	f := make(map[int]int)
-	for k, v := range first {
-		f[k] = v
-	}
-
-	for _, v1 := range second {
-		for k2, v2 := range f {
-			if v1 == v2 {
-				s = append(s, k2)
-			}
-		}
-	}
-
-	sort.Ints(s)
-	for k1, v1 := range s {
-		f[v1] = second[k1]
-	}
-	//golang map 用原生range遍歷不能保證順序輸出
-	var keys []int
-	for k := range f {
-		keys = append(keys, k)
-	}
-
-	sort.Ints(keys)
-	for _, v := range keys {
-		result = append(result, f[v])
-	}
-
-	// log.Println(f, s, result)
-	return result
+	return userCardType.Member, result
 }
 
 func (c *CardType) CompareResult(originResults [][]int) map[int][]int {
 	var cardType string
-	var level, count1, count2, count3, count4, count5, count6, count7, count8, count9, count10, count11, count12, count13, count14, count15 int
+	var level int
 	mSameResult := make(map[int]int)
 	mSameCount := make(map[int]int)
 	mSameLevelResult := make(map[int][]int)
@@ -491,65 +419,50 @@ func (c *CardType) CompareResult(originResults [][]int) map[int][]int {
 
 		switch cardType {
 		case "sc":
-			count1++
 			level = 15
-			mSameCount[level] = count1
+			mSameCount[level]++
 		case "ff":
-			count2++
 			level = 14
-			mSameCount[level] = count2
+			mSameCount[level]++
 		case "5f":
-			count3++
 			level = 13
-			mSameCount[level] = count3
+			mSameCount[level]++
 		case "4f":
-			count4++
 			level = 12
-			mSameCount[level] = count4
+			mSameCount[level]++
 		case "cc":
-			count5++
 			level = 11
-			mSameCount[level] = count5
+			mSameCount[level]++
 		case "c9":
-			count6++
 			level = 10
-			mSameCount[level] = count6
+			mSameCount[level]++
 		case "c8":
-			count7++
 			level = 9
-			mSameCount[level] = count7
+			mSameCount[level]++
 		case "c7":
-			count8++
 			level = 8
-			mSameCount[level] = count8
+			mSameCount[level]++
 		case "c6":
-			count9++
 			level = 7
-			mSameCount[level] = count9
+			mSameCount[level]++
 		case "c5":
-			count10++
 			level = 6
-			mSameCount[level] = count10
+			mSameCount[level]++
 		case "c4":
-			count11++
 			level = 5
-			mSameCount[level] = count11
+			mSameCount[level]++
 		case "c3":
-			count12++
 			level = 4
-			mSameCount[level] = count12
+			mSameCount[level]++
 		case "c2":
-			count13++
 			level = 3
-			mSameCount[level] = count13
+			mSameCount[level]++
 		case "c1":
-			count14++
 			level = 2
-			mSameCount[level] = count14
+			mSameCount[level]++
 		case "c0":
-			count15++
 			level = 1
-			mSameCount[level] = count15
+			mSameCount[level]++
 		default:
 			level = 0
 		}
@@ -588,16 +501,18 @@ func (c *CardType) CompareResult(originResults [][]int) map[int][]int {
 }
 
 // func main() {
-// 	originResults := [][]int{{1, 2, 3, 4, 5}, {6, 7, 8, 9, 10}, {11, 12, 13, 14, 15}, {16, 17, 18, 19, 20}, {21, 22, 23, 24, 25}, {26, 27, 28, 29, 30}, {31, 32, 33, 34, 35}, {36, 37, 38, 39, 40}, {41, 42, 43, 44, 45}, {46, 47, 48, 53, 54}}
+// 	// originResults := [][]int{{1, 2, 3, 4, 5}, {6, 7, 8, 9, 10}, {11, 12, 13, 14, 15}, {16, 17, 18, 19, 20}, {21, 22, 23, 24, 25}, {26, 27, 28, 29, 30}, {31, 32, 33, 34, 35}, {36, 37, 38, 39, 40}, {41, 42, 43, 44, 45}, {46, 47, 48, 53, 54}}
 // 	// originResults := [][]int{{11, 24, 37, 52, 23}, {12, 25, 38, 50, 36}, {13, 26, 39, 51, 49}, {1, 14, 27, 3, 4}, {10, 9, 8, 7, 5}, {49, 22, 21, 20, 31}}
-// 	// originResults := [][]int{{1, 2, 7, 54, 27}, {14, 15, 16, 29, 53}}
+// 	// originResults := [][]int{{16, 28, 12, 22, 49}, {48, 32, 10, 45, 25}}
+// 	originResults := [][]int{{2, 3, 9, 10, 13}, {41, 42, 48, 49, 51}, {15, 16, 22, 23, 26}, {28, 29, 35, 36, 38}}
 // 	//card type 給重複一樣type可以接受
 // 	cts := []string{"sc", "ff", "5f", "4f", "cc", "c9", "c8", "c7", "c6", "c5", "c4", "c3", "c2", "c1", "c0"}
 // 	n, err := New(cts)
 // 	if err != nil {
 // 		log.Println(err)
 // 	}
-
-// 	result := n.CompareResult(originResults)
-// 	log.Println(result)
+// 	for i := 0; i < 500; i++ {
+// 		result := n.CompareResult(originResults)
+// 		log.Println(result)
+// 	}
 // }
