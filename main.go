@@ -369,16 +369,17 @@ type UserCardType struct {
 }
 
 func GetMaxCard(result map[int]map[int]int) (maxCard []int) {
+	// log.Println(result)
 	for i := len(result); i > 0; i-- {
 		var member int
-		member, result = cycle(result)
+		member, result = getMaxMember(result)
 		maxCard = append(maxCard, member)
 	}
 
 	return maxCard
 }
 
-func cycle(result map[int]map[int]int) (int, map[int]map[int]int) {
+func getMaxMember(result map[int]map[int]int) (int, map[int]map[int]int) {
 	var userCardType UserCardType
 	for member, card := range result {
 		for k, v := range card {
@@ -410,7 +411,7 @@ func (c *CardType) CompareResult(originResults [][]int) map[int][]int {
 	mSameCount := make(map[int]int)
 	mSameLevelResult := make(map[int][]int)
 
-	for menber, originResult := range originResults {
+	for member, originResult := range originResults {
 		result := ChangeCard(originResult, c.cardTypeS)
 		cardType = CompareType(result, c.cardTypeS)
 		if cardType == "" {
@@ -466,30 +467,27 @@ func (c *CardType) CompareResult(originResults [][]int) map[int][]int {
 		default:
 			level = 0
 		}
-
-		mSameResult[menber] = level
+		mSameResult[member] = level
 	}
 	// log.Println(mSameResult)
 	// log.Println(mSameCount)
 	for l := 1; l <= 15; l++ {
-		var menber []int
+		var member []int
 		if mSameCount[l] >= 1 {
 			for j := 0; j < len(mSameResult); j++ {
 				if mSameResult[j] == l {
-					menber = append(menber, j)
-					mSameLevelResult[l] = menber
+					member = append(member, j)
+					mSameLevelResult[l] = member
 				}
 			}
 		}
 	}
 
-	// topRank := make(map[int]map[int]map[int]int)
 	for level, same := range mSameLevelResult {
 		mc := make(map[int]map[int]int)
 		for _, menber := range same {
 			mc[menber] = ChangeCard(originResults[menber], c.cardTypeS)
 		}
-		// topRank[level] = mc
 		//相同牌型在判斷
 		if len(mc) > 1 {
 			rSort := GetMaxCard(mc)
